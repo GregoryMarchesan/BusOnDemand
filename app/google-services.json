@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "669873339552",
+    "firebase_url": "https://busondemand-1509160178916.firebaseio.com",
+    "project_id": "busondemand-1509160178916",
+    "storage_bucket": "busondemand-1509160178916.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669873339552:android:88611516ab9dc512",
+        "android_client_info": {
+          "package_name": "com.marchesan.gregory.busondemand"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "669873339552-oqdtq2hk032i51umkbitksrsfgbi56u2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.marchesan.gregory.busondemand",
+            "certificate_hash": "309f826909b3d2e46718eea1b419219e095f6374"
+          }
+        },
+        {
+          "client_id": "669873339552-57373mcpmen9ijt0o2so3i966jvbkdfn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcMa09YbxGylbc0rGKiMkGXUBOVh8ZBBo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "669873339552-57373mcpmen9ijt0o2so3i966jvbkdfn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

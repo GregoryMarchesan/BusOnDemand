@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">BusOnDemand</string>
+    <string name="api_key_maps">AIzaSyAd_L-bxf4Ov2jrk1TaSoPJUYWL-6uPhqE</string>
+
+    <string-array name="sentido">
+        <item> Bairro-UFSM </item>
+        <item> UFSM-Bairro </item>
+    </string-array>
+
+    <string-array name="linha">
+        <item> Universidade - Faixa Velha </item>
+        <item> Universidade - Faixa Nova </item>
+        <item> Bombeiros - Faixa Velha </item>
+        <item> Bombeiros - Faixa Nova </item>
+    </string-array>
+
+
+</resources>
