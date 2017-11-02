@@ -3,10 +3,13 @@ package com.marchesan.gregory.busondemand;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutCompat;
@@ -28,39 +31,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.R.attr.id;
+import static android.location.LocationManager.*;
 
-/**
- * Created by bruno on 9/23/16.
- */
-
-public class LocalDialog extends DialogFragment
-{
+public class LocalDialog extends DialogFragment {
     private static final String TAG = LocalDialog.class.getCanonicalName();
     private Activity activity = null;
     private OnAddMarker listner;
     private TimePickerDialog timePickerDialog;
+    private Spinner sentido;
+    private Spinner linha;
     TextView hora_selecionada;
     int hour_x;
     int minute_x;
     public static final int TIME_PICKER_ID = 1;
 
-    public static LocalDialog getInstance(OnAddMarker listner)
-    {
+    public interface NoticeDialogListener {
+        public void onDialogPositiveClick(String sentido, String linha, String horario);
+        public void onDialogNegativeClick();
+    }
+
+    public static LocalDialog getInstance(OnAddMarker listner) {
         LocalDialog fragmentDialog = new LocalDialog();
         fragmentDialog.listner = listner;
         return fragmentDialog;
     }
 
+    NoticeDialogListener mListener;
+
     @Override
-    public void onAttach(Activity activity)
-    {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+        mListener = (NoticeDialogListener) activity;
     }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState)
-    {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setTitle("Solicitar ônibus");
@@ -68,7 +74,7 @@ public class LocalDialog extends DialogFragment
         View view = inflater.inflate(R.layout.dialog_local, null);
 
         // Sentido da linha
-        final Spinner sentido = (Spinner) view.findViewById(R.id.sentido);
+        sentido = (Spinner) view.findViewById(R.id.sentido);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item,
                 getResources().getStringArray(R.array.sentido));
@@ -77,7 +83,7 @@ public class LocalDialog extends DialogFragment
         sentido.setAdapter(adapter);
 
         // Linha do ônibus
-        Spinner linha = (Spinner) view.findViewById(R.id.linha);
+        linha = (Spinner) view.findViewById(R.id.linha);
 
         hora_selecionada = (TextView) view.findViewById(R.id.hora);
         hora_selecionada.setText(hour_x + " : " + minute_x);
@@ -102,24 +108,8 @@ public class LocalDialog extends DialogFragment
         builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-            DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("linhas");
-            Request request = new Request();
-            request.setId("0");
-            if(sentido.getSelectedItem().toString().equals("Bairro-UFSM")){
-                myRef = myRef.child("Bairro-UFSM");
-
-            }else if(sentido.getSelectedItem().toString().equals("UFSM-Bairro")){
-                myRef = myRef.child("UFSM-Bairro");
-            }
-
-
-            //                request.setId(edtNome.getText().toString());
-            //                request.setLatitude(Double.parseDouble(String.valueOf(location.getLatitude())));
-            //                request.setLongitude(Double.parseDouble(String.valueOf(location.getLongitude())));
-
-            Map<String, Object> childUpdates = new HashMap<>();
-            childUpdates.put(bairroUFSMref.push().getKey(), request.toMap());
-            bairroUFSMref.updateChildren(childUpdates);
+                mListener.onDialogPositiveClick(sentido.getSelectedItem().toString(), linha.getSelectedItem().toString(),
+                        hour_x + " : " + minute_x);
             listner.onAddMarker();
             dialog.dismiss();
             }
@@ -133,6 +123,7 @@ public class LocalDialog extends DialogFragment
         });
         return builder.create();
     }
+
     public interface OnAddMarker{
         void onAddMarker();
     }

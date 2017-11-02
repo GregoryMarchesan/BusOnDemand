@@ -9,6 +9,8 @@ import android.location.LocationManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +32,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,LocationListener,ActivityCompat.OnRequestPermissionsResultCallback,LocalDialog.OnAddMarker {
+import java.util.HashMap;
+import java.util.Map;
+
+public class MainActivity extends AppCompatActivity implements LocalDialog.NoticeDialogListener, OnMapReadyCallback,LocationListener,ActivityCompat.OnRequestPermissionsResultCallback,LocalDialog.OnAddMarker {
 
     private LocationManager lm;
     private Location location;
@@ -42,9 +47,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int REQUEST_PERMISSION = 1;
 
     private GoogleMap map;
-    public int userID = 0;
+    public String userID = " ";
+    private boolean busRequested = false;
+
+    private String sentido, linha, horario;
+
 
     private static String[] PERMISSIONS = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+
+
+    public void setRequestInfo(String horario, String sentido, String linha){
+        String oi = horario;
+        Toast.makeText(this, oi, Toast.LENGTH_SHORT);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,19 +74,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         initMaps();
 
+        // botao para requisitar um onibus
         FloatingActionButton newReq = (FloatingActionButton) findViewById(R.id.newRequest);
         newReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//                Intent reqBus = new Intent(MainActivity.this, RequestBus.class);
-                //myIntent.putExtra("key", value); //Optional parameters
-//                MainActivity.this.startActivity(reqBus);
-                addPin();
-
+                LocalDialog localDialog = LocalDialog.getInstance(MainActivity.this);
+                localDialog.show(getSupportFragmentManager(), "localDialog");
+                Toast.makeText(MainActivity.this, "Horario agendado", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // botao para cancelar requisicao
+        FloatingActionButton cancelReq = (FloatingActionButton) findViewById(R.id.cancelRequest);
+        cancelReq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(busRequested == false){
+                    LocalDialog localDialog = LocalDialog.getInstance(MainActivity.this);
+                    localDialog.show(getSupportFragmentManager(), "localDialog");
+                }else{
+                    Toast.makeText(MainActivity.this, "Horario já agendado. Cancele essa solicitação para fazer uma nova!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        FloatingActionButton getBus = (FloatingActionButton) findViewById(R.id.get_bus);
+        getBus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LocalDialog localDialog = LocalDialog.getInstance(MainActivity.this);
+                localDialog.show(getSupportFragmentManager(), "localDialog");
+
+                Toast.makeText(MainActivity.this, "Horario agendado", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     public void initMaps(){
@@ -112,10 +150,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loadMarker();
     }
-    public void addPin(){
-        LocalDialog localDialog = LocalDialog.getInstance(this);
-        localDialog.show(getSupportFragmentManager(), "localDialog");
-    }
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.addMenu:
-                addPin();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -169,7 +202,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
                 return;
             }
-
         }
     }
 
@@ -208,6 +240,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onAddMarker() {
         loadMarker();
+    }
+
+    @Override
+    public void onDialogPositiveClick(String sentido, String linha, String horario) {
+        this.sentido = sentido;
+        this.linha = linha;
+        this.horario = horario;
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("linhas");
+        if (sentido.equals("Bairro-UFSM")) {
+            myRef = myRef.child("Bairro-UFSM").child(linha);
+        } else if (sentido.equals("UFSM-Bairro")) {
+            myRef = myRef.child("UFSM-Bairro").child(linha.toString());
+        }
+        busRequested = true;
+        Request request = new Request();
+        request.setId(userID);
+        request.setLatitude(location.getLatitude());
+        request.setLongitude(location.getLongitude());
+        request.setValidPosition(false);
+        request.setHorario(horario);
+        request.setBusRequested(true);
+
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(myRef.push().getKey(), request.toMap());
+
+        myRef.updateChildren(childUpdates);
+
+        Toast.makeText(MainActivity.this, "Onibus solicitado!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDialogNegativeClick() {
+
     }
 }
 

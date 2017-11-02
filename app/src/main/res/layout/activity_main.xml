@@ -9,16 +9,15 @@
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment"/>
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/newRequest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="28dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="25dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:background="@android:color/transparent"
@@ -26,5 +25,38 @@
         android:onClick="myLocationCall"
         android:rotation="0"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/colorPrimary" />
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="58dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/cancelRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:onClick="myLocationCall"
+        android:rotation="0"
+        android:src="@android:drawable/ic_delete"
+        android:layout_alignTop="@+id/newRequest"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="56dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/get_bus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@android:color/transparent"
+        app:backgroundTint="@color/colorPrimary"
+        android:clickable="true"
+        android:onClick="myLocationCall"
+        android:rotation="0"
+        android:src="@android:drawable/checkbox_on_background"
+        android:layout_alignTop="@+id/cancelRequest"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

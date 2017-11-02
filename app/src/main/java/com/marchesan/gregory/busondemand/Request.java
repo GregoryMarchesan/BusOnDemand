@@ -5,9 +5,6 @@ import com.google.firebase.database.Exclude;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by bruno on 9/23/16.
- */
 
 public class Request {
 
@@ -16,7 +13,7 @@ public class Request {
     private double longitude;
     private boolean validPosition;
     private boolean busRequested;
-    private int horario;
+    private String horario;
 
     public Request() {
         this.id = "";
@@ -24,14 +21,14 @@ public class Request {
         this.longitude = 0;
         this.validPosition = false;
         this.busRequested = false;
-        this.horario = 0;
+        this.horario = "";
     }
 
-    public int getHorario() {
+    public String getHorario() {
         return horario;
     }
 
-    public void setHorario(int horario) {
+    public void setHorario(String horario) {
         this.horario = horario;
     }
 
