@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements LocalDialog.Notic
     private GoogleMap map;
     public String userID = " ";
     private boolean busRequested = false;
+    private String lastKeyRef = "";
 
     private String sentido, linha, horario;
 
@@ -79,18 +80,7 @@ public class MainActivity extends AppCompatActivity implements LocalDialog.Notic
         newReq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LocalDialog localDialog = LocalDialog.getInstance(MainActivity.this);
-                localDialog.show(getSupportFragmentManager(), "localDialog");
-                Toast.makeText(MainActivity.this, "Horario agendado", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // botao para cancelar requisicao
-        FloatingActionButton cancelReq = (FloatingActionButton) findViewById(R.id.cancelRequest);
-        cancelReq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(busRequested == false){
+                if(!busRequested){
                     LocalDialog localDialog = LocalDialog.getInstance(MainActivity.this);
                     localDialog.show(getSupportFragmentManager(), "localDialog");
                 }else{
@@ -99,14 +89,34 @@ public class MainActivity extends AppCompatActivity implements LocalDialog.Notic
             }
         });
 
+        // botao para cancelar requisicao
+        FloatingActionButton cancelReq = (FloatingActionButton) findViewById(R.id.cancelRequest);
+        cancelReq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(busRequested){
+                    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("linhas").child(sentido)
+                            .child(linha).child(lastKeyRef);
+                    myRef.setValue(null);
+                    busRequested = false;
+                    Toast.makeText(MainActivity.this, "Requisição cancelada!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // botao para notificar que o ônibus foi pego
         FloatingActionButton getBus = (FloatingActionButton) findViewById(R.id.get_bus);
         getBus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LocalDialog localDialog = LocalDialog.getInstance(MainActivity.this);
-                localDialog.show(getSupportFragmentManager(), "localDialog");
-
-                Toast.makeText(MainActivity.this, "Horario agendado", Toast.LENGTH_SHORT).show();
+                if(busRequested){
+                    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("linhas").child(sentido)
+                            .child(linha).child(lastKeyRef);
+                    myRef.setValue(null);
+                    busRequested = false;
+                    Toast.makeText(MainActivity.this, "Obrigado por utilizar o aplicativo! Boa viagem!",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -263,7 +273,8 @@ public class MainActivity extends AppCompatActivity implements LocalDialog.Notic
         request.setBusRequested(true);
 
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(myRef.push().getKey(), request.toMap());
+        lastKeyRef = myRef.push().getKey();
+        childUpdates.put(lastKeyRef, request.toMap());
 
         myRef.updateChildren(childUpdates);
 
