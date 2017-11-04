@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="22" />
@@ -16,7 +17,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"    >
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api_key_maps" />
@@ -29,7 +31,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".RequestBus" />
-        <activity android:name=".timeActivity"></activity>
+        <receiver android:name="com.marchesan.gregory.busondemand.MainActivity$PeriodicService" >
+        </receiver>
     </application>
 
 </manifest>

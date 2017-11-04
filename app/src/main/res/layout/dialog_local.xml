@@ -6,6 +6,22 @@
     android:weightSum="1">
 
     <TextView
+        android:id="@+id/userID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.04"
+        android:text="UserID" />
+
+    <EditText
+        android:id="@+id/userID_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.04"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+    <TextView
         android:id="@+id/sentido_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

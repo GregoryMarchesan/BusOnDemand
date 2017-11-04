@@ -33,6 +33,12 @@ import java.util.Map;
 import static android.R.attr.id;
 import static android.location.LocationManager.*;
 
+// ----------------------------------------------------------------------------
+//                              Gregory Marchesan
+//                              Vinicius Farias
+// ----------------------------------------------------------------------------
+//                               04/11/2017
+
 public class LocalDialog extends DialogFragment {
     private static final String TAG = LocalDialog.class.getCanonicalName();
     private Activity activity = null;
@@ -44,10 +50,11 @@ public class LocalDialog extends DialogFragment {
     int hour_x;
     int minute_x;
     public static final int TIME_PICKER_ID = 1;
+    String user;
+    EditText userID;
 
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(String sentido, String linha, String horario);
-        public void onDialogNegativeClick();
+        public void onDialogPositiveClick(String user, String sentido, String linha, int hour, int minute);
     }
 
     public static LocalDialog getInstance(OnAddMarker listner) {
@@ -72,6 +79,9 @@ public class LocalDialog extends DialogFragment {
         builder.setTitle("Solicitar ônibus");
         LayoutInflater inflater = LayoutInflater.from(activity);
         View view = inflater.inflate(R.layout.dialog_local, null);
+
+        //userID
+        userID = view.findViewById(R.id.userID_text);
 
         // Sentido da linha
         sentido = (Spinner) view.findViewById(R.id.sentido);
@@ -108,9 +118,13 @@ public class LocalDialog extends DialogFragment {
         builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mListener.onDialogPositiveClick(sentido.getSelectedItem().toString(), linha.getSelectedItem().toString(),
-                        hour_x + " : " + minute_x);
-            listner.onAddMarker();
+                user = userID.getText().toString();
+                if(user.length() > 5){
+                    mListener.onDialogPositiveClick(user, sentido.getSelectedItem().toString(), linha.getSelectedItem().toString(),
+                            hour_x, minute_x);
+                }else{
+                    Toast.makeText(activity, "Coloque um usuário válido!", Toast.LENGTH_SHORT).show();
+                }
             dialog.dismiss();
             }
         });
